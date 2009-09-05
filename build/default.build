@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<project name="linqjs" default="run">
+  <loadtasks assembly="../tools/nantcontrib/bin/NAnt.Contrib.Tasks.dll" />
+  <property name="tools.jsl" value="..\tools\jsl\jsl.exe"/>
+  <property name="tools.jsl.conf" value="jsl.default.conf"/>
+  <property name="tools.packer" value="..\tools\packer\bin\packer.exe"/>
+  <property name="version.number" value="1.3" />
+  <property name="output.directory" value="output" />
+  <property name="output.license" value="${output.directory}\license.txt" />
+  <property name="output.zip" value="${output.directory}\linq2js-${version.number}.zip" />
+  <property name="source.directory" value="..\src" />
+  <property name="source.file" value="${source.directory}\linq2js.js" />
+  <property name="source.license" value="${source.directory}\license.txt" />
+
+  <target name="build">
+    <delete dir="${output.directory}" />
+    <mkdir dir="${output.directory}" />
+    
+    <exec program="${tools.jsl}" commandline="-conf ${tools.jsl.conf} -process ${source.file}" failonerror="true" />
+    
+    <exec program="${tools.packer}" commandline="-o ${output.directory}\${path::get-file-name-without-extension(source.file)}.packed -m packer ${source.file}" />
+    <exec program="${tools.packer}" commandline="-o ${output.directory}\${path::get-file-name-without-extension(source.file)}.min -m jsmin ${source.file}" />
+
+    <loadfile file="${source.license}" property="license">
+      <filterchain>
+        <replacetokens>
+          <token key="NOW" value="${datetime::now()}" />
+          <token key="VERSION" value="${version.number}" />
+        </replacetokens>
+      </filterchain>
+    </loadfile>
+
+    <echo message="${license}" file="${output.license}" />
+
+    <foreach item="File" property="file">
+      <in>
+        <items>
+          <include name="${output.directory}\linq2js.min" />
+          <include name="${output.directory}\linq2js.packed" />
+        </items>
+      </in>
+      <do>
+        <concat destfile="${output.directory}\linq2js-${version.number}${path::get-extension(file)}.js">
+          <fileset>
+            <include name="${output.license}" />
+            <include name="${file}" />
+          </fileset>
+        </concat>
+
+        <delete file="${file}" />
+      </do>
+    </foreach>
+
+    <concat destfile="${output.directory}\linq2js-${version.number}-vsdoc.js">
+      <fileset>
+        <include name="${output.license}" />
+        <include name="${source.file}" />
+      </fileset>
+    </concat>
+
+    <zip zipfile="${output.zip}">
+      <fileset basedir="${output.directory}">
+        <include name="**/*" />
+      </fileset>
+    </zip>
+  </target>
+
+  <target name="run" depends="build">
+  </target>
+</project>

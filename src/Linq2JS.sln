@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linq2JS", "Linq2JS.csproj", "{8818DE99-97DF-48FD-A8EA-1007DB41604E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9DB4C237-459D-43B4-AC67-0CF67E316AD9}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.bat = ..\build\build.bat
+		..\build\default.build = ..\build\default.build
+		..\build\jsl.default.conf = ..\build\jsl.default.conf
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8818DE99-97DF-48FD-A8EA-1007DB41604E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8818DE99-97DF-48FD-A8EA-1007DB41604E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8818DE99-97DF-48FD-A8EA-1007DB41604E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8818DE99-97DF-48FD-A8EA-1007DB41604E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

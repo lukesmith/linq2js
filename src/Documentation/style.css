@@ -1,0 +1,29 @@
+﻿div.summary
+{
+	padding: 10px;
+	border: solid 1px black;
+}
+
+div.params
+{
+	padding: 10px;
+	border: solid 1px black;
+}
+
+div.params div.name
+{
+}
+
+div.params div.type
+{
+}
+
+div.params div.description
+{
+}
+
+div.returns
+{
+	padding: 10px;
+	border: solid 1px black;
+}
