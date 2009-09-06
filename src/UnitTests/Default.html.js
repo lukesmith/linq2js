@@ -1,6 +1,6 @@
-﻿/// <reference path="../Scripts/jquery-1.2.6-vsdoc.js" />
-/// <reference path="../Scripts/testrunner.js" />
-/// <reference path="../Linq2JS.min-vsdoc.js" />
+﻿/// <reference path="Scripts/jquery-vsdoc.js" />
+/// <reference path="Scripts/testrunner.js" />
+/// <reference path="../linq2js.js" />
 
 var AnimalType = {
     Dog: 1,
