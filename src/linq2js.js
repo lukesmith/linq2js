@@ -419,7 +419,7 @@
                 add(t, element);
                 add(ret, { key: currentKey, values: t });
             }
-        });
+        }
 
         return ret;
     }
@@ -531,7 +531,7 @@
             if (contains(secondDistinct, firstElement, equalityComparer)) {
                 add(ret, firstElement);
             }
-        });
+        }
 
         return ret;
     }
@@ -556,7 +556,7 @@
                 if (predicate(element, i)) {
                     ret = element;
                 }
-            });
+            }
         }
 
         return ret;
@@ -608,7 +608,7 @@
             if (val > ret) {
                 ret = val;
             }
-        });
+        }
 
         return ret;
     }
@@ -639,7 +639,7 @@
             if (val < ret) {
                 ret = val;
             }
-        });
+        }
 
         return ret;
     }
@@ -730,7 +730,7 @@
             if (predicate(element, i)) {
                 matches.push(element);
             }
-        });
+        }
 
         var matchesLength = matches.length;
         for (var m = 0; m < matchesLength; m++) {
@@ -830,7 +830,7 @@
         for (var i = 0; i < length; i++) {
             var item = sequence[i];
             add(ret, selector(item, i));
-        });
+        }
 
         return ret;
     }
@@ -863,7 +863,7 @@
             e.each(function(resultItem) {
                 add(ret, resultSelector(collectionItem, resultItem));
             });
-        });
+        }
 
         return ret;
     }
