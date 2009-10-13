@@ -1,4 +1,4 @@
-﻿/// <reference path="qunit.js" />
+/// <reference path="qunit.js" />
 /// <reference path="../linq2js.js" />
 
 var AnimalType = {
@@ -45,7 +45,7 @@ test("Create an enumerable from an array", function() {
 test("Create an enumerable from an object thats not an array", function() {
     var result = $e({ type: AnimalType.Dog, name: "Rover", age: 13, children: [] });
 
-    equals(result.count(), 4, "Result has elements");
+    equals(result.first().type, AnimalType.Dog, "First result is a dog");
 });
 
 module("Enumerable Add");

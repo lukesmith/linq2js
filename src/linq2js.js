@@ -1,4 +1,4 @@
-﻿(function() {
+(function() {
     var Enumerable = window.Enumerable = window.$e = function(array) {
         ///	<summary>
         ///		1: $() - Creates an empty Enumerable object.
@@ -234,9 +234,9 @@
         } else {
             var count = 0;
 
-            var length = sequence.length;
+            var length = sequence.elements.length;
             for (var i = 0; i < length; i++) {
-                if (predicate(sequence[i], i)) {
+                if (predicate(sequence.elements[i], i)) {
                     count++;
                 }            
             }
@@ -262,9 +262,9 @@
         ///	<returns type="Enumerable" />
         var ret = new Enumerable();
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var element = sequence[i];
+            var element = sequence.elements[i];
             if (!ret.contains(element, equalityComparer)) {
                 add(ret, element);
             }
@@ -323,9 +323,9 @@
 
         var ret = new Enumerable();
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var element = sequence[i];
+            var element = sequence.elements[i];
             
             if (!contains(parameterEnumerable, element, equalityComparer)) {
                 add(ret, element);
@@ -396,9 +396,9 @@
             equalityComparer = sequence._defaultEqualityComparer;
         }
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var element = sequence[i];
+            var element = sequence.elements[i];
             var currentKey = keySelector(element);
             var keyToAddTo = currentKey;
 
@@ -525,9 +525,9 @@
         var secondDistinct = distinct(ensureEnumerable(second), equalityComparer);
         var ret = new Enumerable();
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var firstElement = sequence[i];
+            var firstElement = sequence.elements[i];
             if (contains(secondDistinct, firstElement, equalityComparer)) {
                 add(ret, firstElement);
             }
@@ -549,10 +549,10 @@
         if (typeof predicate === "undefined" || predicate === null) {
             ret = sequence.elements[sequence.elements.length - 1];
         } else {
-            var length = sequence.length;
+            var length = sequence.elements.length;
             
             for (var i = 0; i < length; i++) {
-                var element = sequence[i];
+                var element = sequence.elements[i];
                 if (predicate(element, i)) {
                     ret = element;
                 }
@@ -601,9 +601,9 @@
             selector = sequence._defaultElementSelector;
         }
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var item = sequence[i];
+            var item = sequence.elements[i];
             var val = selector(item, i);
             if (val > ret) {
                 ret = val;
@@ -632,9 +632,9 @@
             selector = sequence._defaultElementSelector;
         }
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var item = sequence[i];
+            var item = sequence.elements[i];
             var val = selector(item, i);
             if (val < ret) {
                 ret = val;
@@ -724,9 +724,9 @@
         ///	<returns type="Number" integer="true" />
         var matches = [];
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var element = sequence[i];
+            var element = sequence.elements[i];
             if (predicate(element, i)) {
                 matches.push(element);
             }
@@ -826,9 +826,9 @@
     function select(sequence, selector) {
         var ret = new Enumerable();
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var item = sequence[i];
+            var item = sequence.elements[i];
             add(ret, selector(item, i));
         }
 
@@ -856,9 +856,9 @@
             };
         }
 
-        var length = sequence.length;
+        var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var collectionItem = sequence[i];
+            var collectionItem = sequence.elements[i];
             var e = ensureEnumerable(collectionSelector(collectionItem, i));
             e.each(function(resultItem) {
                 add(ret, resultSelector(collectionItem, resultItem));
@@ -1187,6 +1187,12 @@
             ///	<returns type="Enumerable" />
             if (typeof array === "undefined" || array === null) {
                 array = [];
+            }
+
+            if (typeof array.length === "undefined") {
+                var obj = array;
+                array = [];
+                array.push(obj);
             }
 
             this.elements = array.slice();
