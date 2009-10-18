@@ -1,0 +1,41 @@
+require 'rubygems'
+require 'zip/zip'
+require 'zip/zipfilesystem'
+
+version_number = 1.4
+
+desc "Compiles, unit tests"
+task :all => [:clean, :setup, :default, :license, :generateoutput]
+
+desc "**Default**"
+task :default do
+  copy("src/linq2js.js", "build/")
+  sh "juicer merge 'build/linq2js.js' --force"
+end
+
+task :license do
+  now = Time.now
+  buffer = File.new("license.txt",'r').read.gsub(/#{"@VERSION@"}/,version_number.to_s).gsub(/#{"@NOW@"}/,now.to_s)
+  File.open("build/license.txt",'w') {|fw| fw.write(buffer)}
+end
+
+task :clean do
+  File.delete(*Dir["build/*"]) if File.exists?("build")
+  Dir.rmdir("build") if File.exists?("build")
+  Dir.rmdir("output") if File.exists?("output")
+end
+
+task :setup do
+  Dir.mkdir("build")
+end
+
+task :generateoutput do
+  Dir.mkdir("output") unless File.exists?("output")
+  zip_file = "output/linq2js.zip"
+  File.delete(zip_file) if File.exists?(zip_file)
+  Zip::ZipFile.open(zip_file, Zip::ZipFile::CREATE) do |zf|
+    zf.add("linq2js.js", "build/linq2js.js")
+    zf.add("linq2js.min.js", "build/linq2js.min.js")
+    zf.add("license.txt", "build/license.txt")
+  end
+end

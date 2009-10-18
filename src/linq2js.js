@@ -1,5 +1,14 @@
-(function() {
-    var Enumerable = window.Enumerable = window.$e = function(array) {
+/**
+* My script file
+*
+*/
+
+(function () {
+    /*global window, copy: false, each: false, where: false, removeAt: false */
+    /*jslint plusplus: false, onevar: false, nomen: false */
+    "use strict";
+    
+    var Enumerable = window.Enumerable = window.$e = function (array) {
         ///	<summary>
         ///		1: $() - Creates an empty Enumerable object.
         ///		2: $(array) - This function accepts an array.
@@ -12,11 +21,11 @@
     };
 
     function parseExpressions(sequence) {
-        var tempSequence = new Enumerable(sequence.elements);
+        var tempSequence = new Enumerable(sequence.elements), expression, args;
 
         for (var expressionIndex = 0; expressionIndex < sequence.expressions.length; expressionIndex++) {
-            var expression = sequence.expressions[expressionIndex];
-            var args = [];
+            expression = sequence.expressions[expressionIndex];
+            args = [];
             args.push(tempSequence);
             for (var j = 0; j < expression.args.length; j++) {
                 args.push(expression.args[j]);
@@ -45,9 +54,9 @@
         }
     }
 
-    function addExpression(sequence, func, arguments) {
+    function addExpression(sequence, func, args) {
         var ret = copy(sequence);
-        ret.expressions.push({ func: func, args: arguments });
+        ret.expressions.push({ func: func, args: args });
         return ret;
     }
 
@@ -83,7 +92,7 @@
         var thisEnumerable = sequence;
         var parameterEnumerable = ensureEnumerable(elements);
 
-        each(parameterEnumerable, function(element) {
+        each(parameterEnumerable, function (element) {
             thisEnumerable.elements.push(element);
             thisEnumerable.length++;
         });
@@ -167,13 +176,11 @@
         ///     The sequence to clear.
         ///	</param>
         ///	<returns type="Enumerable" />
-        /*jsl:ignore*/
         while (sequence.elements.pop()) {
         }
 
         while (sequence.expressions.pop()) {
         }
-        /*jsl:end*/
 
         return sequence;
     }
@@ -232,16 +239,16 @@
         if (typeof predicate === "undefined" || predicate === null) {
             return sequence.elements.length;
         } else {
-            var count = 0;
+            var total = 0;
 
             var length = sequence.elements.length;
             for (var i = 0; i < length; i++) {
                 if (predicate(sequence.elements[i], i)) {
-                    count++;
+                    total++;
                 }            
             }
 
-            return count;
+            return total;
         }
     }
 
@@ -666,7 +673,7 @@
 
         var ordered = new Enumerable(sequence.elements);
 
-        ordered.elements.sort(function(a, b) {
+        ordered.elements.sort(function (a, b) {
             var aKey = keySelector(a);
             var bKey = keySelector(b);
 
@@ -848,21 +855,23 @@
         ///	</param>
         ///	<returns type="Enumerable" />
         var ret = new Enumerable();
-        var instance = sequence;
+        var collectionItem;
 
         if (typeof resultSelector === "undefined" || resultSelector === null) {
-            resultSelector = function(collectionItem, resultItem) {
+            resultSelector = function (collectionItem, resultItem) {
                 return resultItem;
             };
         }
 
+        var addItemToReturn = function (item) {
+            add(ret, resultSelector(collectionItem, item));
+        };
+
         var length = sequence.elements.length;
         for (var i = 0; i < length; i++) {
-            var collectionItem = sequence.elements[i];
+            collectionItem = sequence.elements[i];
             var e = ensureEnumerable(collectionSelector(collectionItem, i));
-            e.each(function(resultItem) {
-                add(ret, resultSelector(collectionItem, resultItem));
-            });
+            e.each(addItemToReturn);
         }
 
         return ret;
@@ -954,7 +963,7 @@
         var ret = new Enumerable();
 
         var startReturning = false;
-        each(sequence, function(item, index) {
+        each(sequence, function (item, index) {
             if (!startReturning) {
                 if (!predicate(item, index)) {
                     startReturning = true;
@@ -984,7 +993,7 @@
             selector = sequence._defaultElementSelector;
         }
 
-        each(sequence, function(item, index) {
+        each(sequence, function (item, index) {
             ret += selector(item, index);
         });
 
@@ -1063,7 +1072,7 @@
         var ret = {};
         var addedKeys = [];
 
-        each(selector, function(item) {
+        each(selector, function (item) {
             var key = keySelector(item);
 
             for (var i = 0; i < addedKeys.length; i++) {
@@ -1076,8 +1085,6 @@
             ret[key] = elementSelector(item);
             addedKeys.push(key);
         });
-
-        delete addedKeys;
 
         return ret;
     }
@@ -1105,13 +1112,13 @@
 
         var ret = new Enumerable();
 
-        each(sequence, function(item) {
+        each(sequence, function (item) {
             if (!contains(ret, item, equalityComparer)) {
                 add(ret, item);
             }
         });
 
-        ensureEnumerable(second).each(function(item) {
+        ensureEnumerable(second).each(function (item) {
             if (!contains(ret, item, equalityComparer)) {
                 add(ret, item);
             }
@@ -1130,7 +1137,7 @@
         ///	<returns type="Enumerable" />
         var ret = new Enumerable();
 
-        each(sequence, function(item) {
+        each(sequence, function (item) {
             if (predicate(item)) {
                 add(ret, item);
             }
@@ -1140,22 +1147,22 @@
     }
 
     Enumerable.fn = Enumerable.prototype = {
-        _defaultEqualityComparer: function(element1, element2) {
+        _defaultEqualityComparer: function (element1, element2) {
             ///	<private />
             return element1 === element2;
         },
 
-        _defaultKeySelector: function(element) {
+        _defaultKeySelector: function (element) {
             ///	<private />
             return element;
         },
 
-        _defaultElementSelector: function(item, index) {
+        _defaultElementSelector: function (item, index) {
             ///	<private />
             return item;
         },
 
-        _defaultComparer: function(element1, element2) {
+        _defaultComparer: function (element1, element2) {
             ///	<private />
             if (element1 === element2) {
                 return 0;
@@ -1176,7 +1183,7 @@
             }
         },
 
-        init: function(array) {
+        init: function (array) {
             ///	<summary>
             ///		1: $() - Creates an empty Enumerable object.
             ///		2: $(array) - This function accepts an array.
@@ -1201,7 +1208,7 @@
             return this;
         },
 
-        add: function(element) {
+        add: function (element) {
             ///	<summary>
             ///		This function adds an element to the Enumerable object.
             ///	</summary>
@@ -1213,7 +1220,7 @@
             this.elements = t.elements;
         },
 
-        addRange: function(elements) {
+        addRange: function (elements) {
             ///	<summary>
             ///		1: addRange(array) - This function adds all the elements in an array to the Enumerable object.
             ///		2: addRange(Enumerable) - This function adds all the elements in a Enumerable object to the Enumerable object.
@@ -1227,7 +1234,7 @@
             this.elements = t.elements;
         },
 
-        all: function(predicate) {
+        all: function (predicate) {
             ///	<summary>
             ///		Determines whether all elements of a sequence satisfy a condition.
             ///	</summary>
@@ -1238,7 +1245,7 @@
             return all(this.execute(), predicate);
         },
 
-        any: function(predicate) {
+        any: function (predicate) {
             ///	<summary>
             ///		1: any() - Determines whether the Enumerable contains any elements.
             ///     2: any(predicate) - Determines whether any elements of the Enumerable satisfy a condition.
@@ -1250,7 +1257,7 @@
             return any(this.execute(), predicate);
         },
 
-        average: function(selector) {
+        average: function (selector) {
             /// <summary>
             ///     1: average() - Computes the average of the Enumerable values.
             ///     2: average(selector) - Computes the average of the Enumerable using the specific selector to select the value for each element.
@@ -1262,14 +1269,14 @@
             return average(this.execute(), selector);
         },
 
-        clear: function() {
+        clear: function () {
             ///	<summary>
             ///		Removes all elements from the Enumerable.
             ///	</summary>
             clear.call(this, this);
         },
 
-        concat: function(second) {
+        concat: function (second) {
             ///	<summary>
             ///		Concatenates the sequence to the Enumerable.
             ///	</summary>
@@ -1281,7 +1288,7 @@
             return addExpression(this, concat, [second]);
         },
 
-        contains: function(element, equalityComparer) {
+        contains: function (element, equalityComparer) {
             ///	<summary>
             ///		1: Determines whether an element is in the Enumerable object.
             ///		2: Determines whether an element is in the Enumerable object using an equalityComparer.
@@ -1296,7 +1303,7 @@
             return contains(this.execute(), element, equalityComparer);
         },
 
-        count: function(predicate) {
+        count: function (predicate) {
             ///	<summary>
             ///     1: count() - Gets the number of elements actually contained in the Enumerable object.
             ///		2: count(predicate) - Returns a number that represents how many elements in the Enumerable object satisfy a condition.
@@ -1308,7 +1315,7 @@
             return count(this.execute(), predicate);
         },
 
-        copy: function() {
+        copy: function () {
             ///	<summary>
             ///     copy() - Copies the Enumerable.
             ///	</summary>
@@ -1316,7 +1323,7 @@
             return copy(this);
         },
 
-        distinct: function(equalityComparer) {
+        distinct: function (equalityComparer) {
             ///	<summary>
             ///     1: distinct() - Returns distinct elements from the Enumerable object.
             ///		2: distinct(equalityComparer) - Returns distinct elements from the Enumerable object using the comparer to comparer elements.
@@ -1328,7 +1335,7 @@
             return addExpression(this, distinct, [equalityComparer]);
         },
 
-        each: function(callback) {
+        each: function (callback) {
             ///	<summary>
             ///		This function iterates through each element in the Enumerable object.
             ///	</summary>
@@ -1339,7 +1346,7 @@
             return each(new Enumerable(this.toArray()), callback);
         },
 
-        elementAt: function(index) {
+        elementAt: function (index) {
             ///	<summary>
             ///		Returns the element at the specified index in the Enumerable object.
             ///	</summary>
@@ -1350,7 +1357,7 @@
             return elementAt(this.execute(), index);
         },
 
-        except: function(second, equalityComparer) {
+        except: function (second, equalityComparer) {
             ///	<summary>
             ///		1: except(second) - Produces the set difference of two sequences by using the default equality comparer to compare values.
             ///		2: except(second, equalityComparer) - Produces the set difference of two sequences by using the comparer to compare values.
@@ -1366,7 +1373,7 @@
             return addExpression(this, except, [second, equalityComparer]);
         },
 
-        execute: function() {
+        execute: function () {
             /// <summary>
             /// Executes the Enumerable query.
             /// </summary>
@@ -1374,7 +1381,7 @@
             return ensureEnumerable(this.toArray());
         },
 
-        first: function(predicate) {
+        first: function (predicate) {
             ///	<summary>
             ///		1: first() - Returns the first element of the Enumerable object.
             ///		2: first(predicate) - Returns the first element in a sequence that satisfies a specified condition.
@@ -1386,7 +1393,7 @@
             return first(this.execute(), predicate);
         },
 
-        firstOrDefault: function(predicate, defaultValue) {
+        firstOrDefault: function (predicate, defaultValue) {
             ///	<summary>
             ///		1: first(null, defaultValue) - Returns the first element of the Enumerable object.
             ///		2: first(predicate, defaultValue) - Returns the first element in a sequence that satisfies a specified condition.
@@ -1401,7 +1408,7 @@
             return firstOrDefault(this.execute(), predicate, defaultValue);
         },
 
-        groupBy: function(keySelector, equalityComparer) {
+        groupBy: function (keySelector, equalityComparer) {
             ///	<summary>
             ///		1: groupBy(keySelector) - Groups the elements of a sequence according to a specified key selector function.
             ///		2: groupBy(keySelector, equalityComparer) - Groups the elements of a sequence according to a specified key selector function and compares the keys by using a specified comparer.
@@ -1416,7 +1423,7 @@
             return addExpression(this, groupBy, [keySelector, equalityComparer]);
         },
 
-        indexOf: function(item, index, count) {
+        indexOf: function (item, index, count) {
             ///	<summary>
             ///		1: indexOf(item) - Searches for the specified object and returns the zero-based index of the first occurrence within the entire Enumerable object.
             ///		2: indexOf(item, index) - Searches for the specified object and returns the zero-based index of the first occurrence within the range of elements in the Enumerable object that extends from the specified index to the last element.
@@ -1435,7 +1442,7 @@
             return indexOf(this.execute(), item, index, count);
         },
 
-        insert: function(index, item) {
+        insert: function (index, item) {
             ///	<summary>
             ///		Inserts an element into the Enumerable at the specified index.
             ///	</summary>
@@ -1449,7 +1456,7 @@
             return addExpression(this, insert, [index, item]);
         },
 
-        insertRange: function(index, items) {
+        insertRange: function (index, items) {
             ///	<summary>
             ///		1: insertRange(index, array) - Inserts a the array elements into the Enumerable at the specified index.
             ///		2: insertRange(index, Enumerable) - Inserts the elements of the Enumerable object into the Enumerable at the specified index.
@@ -1465,7 +1472,7 @@
             return addExpression(this, insertRange, [index, items]);
         },
 
-        intersect: function(second, equalityComparer) {
+        intersect: function (second, equalityComparer) {
             ///	<summary>
             ///		1: intersect(second) - Produces the set intersection of two sequences by using the default equality comparer to compare values.
             ///		2: intersect(second, equalityComparer) - Produces the set intersection of two sequences by using the specified comparer to compare values.
@@ -1481,7 +1488,7 @@
             return addExpression(this, intersect, [second, equalityComparer]);
         },
 
-        last: function(predicate) {
+        last: function (predicate) {
             ///	<summary>
             ///		1: last() - Returns the last element of a sequence.
             ///		2: last() - Returns the last element of a sequence that satisfies a specified condition.
@@ -1493,7 +1500,7 @@
             return last(this.execute(), predicate);
         },
 
-        lastOrDefault: function(predicate, defaultValue) {
+        lastOrDefault: function (predicate, defaultValue) {
             ///	<summary>
             ///		1: first(null, defaultValue) - Returns the last element of the Enumerable object.
             ///		2: first(predicate, defaultValue) - Returns the last element in a sequence that satisfies a specified condition.
@@ -1508,7 +1515,7 @@
             return lastOrDefault(this.execute(), predicate, defaultValue);
         },
 
-        max: function(selector) {
+        max: function (selector) {
             /// <summary>
             ///     1: max() - Returns the maximum value in a sequence of values.
             ///     2: max(selector) - Returns the maximum value of the Enumerable using the specific selector to select the value for each element.
@@ -1520,7 +1527,7 @@
             return max(this.execute(), selector);
         },
 
-        min: function(selector) {
+        min: function (selector) {
             /// <summary>
             ///     1: min() - Returns the minimum value in a sequence of values.
             ///     2: min(selector) - Returns the minimum value of the Enumerable using the specific selector to select the value for each element.
@@ -1532,7 +1539,7 @@
             return min(this.execute(), selector);
         },
 
-        orderBy: function(keySelector, comparer) {
+        orderBy: function (keySelector, comparer) {
             /// <summary>
             ///     1: orderBy(keySelector) - Sorts the elements of a sequence in ascending order according to a key.
             ///     2: orderBy(keySelector, comparer) - Sorts the elements of a sequence in ascending order by using a specified comparer.
@@ -1569,7 +1576,7 @@
             return ret;
         },
 
-        orderByDescending: function(keySelector, comparer) {
+        orderByDescending: function (keySelector, comparer) {
             /// <summary>
             ///     1: orderByDescending(keySelector) - Sorts the elements of a sequence in descending order according to a key.
             ///     2: orderByDescending(keySelector, comparer) - Sorts the elements of a sequence in descending order by using a specified comparer.
@@ -1584,7 +1591,7 @@
             return addExpression(this, orderByDescending, [keySelector, comparer]);
         },
 
-        remove: function(item) {
+        remove: function (item) {
             /// <summary>
             ///     Removes the first occurrence of a specific object from Enumerable.
             /// </summary>
@@ -1598,7 +1605,7 @@
             return res;
         },
 
-        removeAll: function(predicate) {
+        removeAll: function (predicate) {
             /// <summary>
             ///     Removes the all the elements that match the conditions defined by the specified predicate.
             /// </summary>
@@ -1613,7 +1620,7 @@
             return res;
         },
 
-        removeAt: function(index) {
+        removeAt: function (index) {
             /// <summary>
             ///     Removes the element at the specified index of the Enumerable.
             /// </summary>
@@ -1628,7 +1635,7 @@
             return res;
         },
 
-        removeRange: function(index, count) {
+        removeRange: function (index, count) {
             /// <summary>
             ///     Removes a range of elements from the Enumerable.
             /// </summary>
@@ -1646,7 +1653,7 @@
             return res;
         },
 
-        reverse: function(index, count) {
+        reverse: function (index, count) {
             /// <summary>
             ///     Reverses the order of the elements in a sequence.
             /// </summary>
@@ -1660,7 +1667,7 @@
             return addExpression(this, reverse, [index, count]);
         },
 
-        select: function(selector) {
+        select: function (selector) {
             /// <summary>
             ///     Projects each element of a sequence into a new form.
             /// </summary>
@@ -1671,7 +1678,7 @@
             return addExpression(this, select, [selector]);
         },
 
-        selectMany: function(collectionSelector, resultSelector) {
+        selectMany: function (collectionSelector, resultSelector) {
             /// <summary>
             ///     1: selectMany(collectionSelector) - Projects each element of a sequence to an Enumerable and flattens the resulting sequences into one sequence.
             ///     2: selectMany(collectionSelector, resultSelector) - Projects each element of a sequence to an Enumerable, flattens the resulting sequences into one sequence, and invokes a result selector function on each element therein.
@@ -1686,7 +1693,7 @@
             return addExpression(this, selectMany, [collectionSelector, resultSelector]);
         },
 
-        sequenceEqual: function(second, equalityComparer) {
+        sequenceEqual: function (second, equalityComparer) {
             /// <summary>
             ///     1: sequenceEqual(second) - Determines whether two sequences are equal by comparing the elements by using the default equality comparer for their type.
             ///     2: sequenceEqual(Enumerable) - Determines whether two sequences are equal by comparing the elements by using the default equality comparer for their type.
@@ -1703,7 +1710,7 @@
             return sequenceEqual(this.execute(), second, equalityComparer);
         },
 
-        single: function(predicate) {
+        single: function (predicate) {
             /// <summary>
             ///     Returns the only element of a sequence, and throws an exception if there is not exactly one element in the sequence.
             /// </summary>
@@ -1714,7 +1721,7 @@
             return single(this.execute(), predicate);
         },
 
-        skip: function(count) {
+        skip: function (count) {
             /// <summary>
             ///     Bypasses a specified number of elements in a sequence and then returns the remaining elements.
             /// </summary>
@@ -1725,7 +1732,7 @@
             return addExpression(this, skip, [count]);
         },
 
-        skipWhile: function(predicate) {
+        skipWhile: function (predicate) {
             /// <summary>
             ///     Bypasses elements in a sequence as long as a specified condition is true and then returns the remaining elements.
             /// </summary>
@@ -1736,7 +1743,7 @@
             return addExpression(this, skipWhile, [predicate]);
         },
 
-        sum: function(selector) {
+        sum: function (selector) {
             /// <summary>
             ///     1: sum() - Computes the sum of a sequence of values.
             ///     2: sum(selector) - Computes the sum of the Enumerable using the specific selector to select the value for each element.
@@ -1748,7 +1755,7 @@
             return sum(this.execute(), selector);
         },
 
-        take: function(count) {
+        take: function (count) {
             /// <summary>
             ///     Returns a specified number of contiguous elements from the start of a sequence.
             /// </summary>
@@ -1759,7 +1766,7 @@
             return addExpression(this, take, [count]);
         },
 
-        takeWhile: function(predicate) {
+        takeWhile: function (predicate) {
             /// <summary>
             ///     Returns elements from a sequence as long as a specified condition is true. 
             /// </summary>
@@ -1770,7 +1777,7 @@
             return addExpression(this, takeWhile, [predicate]);
         },
 
-        toArray: function() {
+        toArray: function () {
             /// <summary>
             ///     Creates an array from an enumerable.
             /// </summary>
@@ -1778,7 +1785,7 @@
             return parseExpressions.call(this, this).elements;
         },
 
-        toDictionary: function(keySelector, elementSelector, equalityComparer) {
+        toDictionary: function (keySelector, elementSelector, equalityComparer) {
             /// <summary>
             ///     1: toDictionary(keySelector) - Create a dictionary according to a specified key selector function;
             ///     2: toDictionary(keySelector, null, equalityComparer) - Create a dictionary according to a specified key selector function and key comparer.
@@ -1798,7 +1805,7 @@
             return toDictionary(this.execute(), keySelector, elementSelector, equalityComparer);
         },
 
-        union: function(second, equalityComparer) {
+        union: function (second, equalityComparer) {
             /// <summary>
             ///     1: union(second) - Produces the set union of two sequences by using the default equality comparer.
             ///     2: union(second, equalityComparer) - Produces the set union of two sequences by using a specified equality comparer.
@@ -1810,7 +1817,7 @@
             return addExpression(this, union, [second, equalityComparer]);
         },
 
-        where: function(predicate) {
+        where: function (predicate) {
             /// <summary>
             ///     Filters a sequence of values based on a predicate.
             /// </summary>
@@ -1822,7 +1829,7 @@
         }
     };    
 
-    Enumerable.fromDictionary = function(dictionary) {
+    Enumerable.fromDictionary = function (dictionary) {
         /// <summary>
         ///     Generates an Enumerable object from a dictionary object.
         /// </summary>
@@ -1833,13 +1840,15 @@
         var enumerable = new Enumerable();
 
         for (var keyName in dictionary) {
-            enumerable.add({ key: keyName, value: dictionary[keyName] });
+            if (typeof dictionary[keyName] !== 'function') {
+                enumerable.add({ key: keyName, value: dictionary[keyName] });
+            }
         }
 
         return enumerable;
     };
 
-    Enumerable.range = function(start, count) {
+    Enumerable.range = function (start, count) {
         /// <summary>
         ///     Generates a sequence of integral numbers within a specified range.
         /// </summary>
@@ -1863,7 +1872,7 @@
         return ret;
     };
 
-    Enumerable.repeat = function(item, count) {
+    Enumerable.repeat = function (item, count) {
         /// <summary>
         ///     Generates a sequence that contains one repeated value.
         /// </summary>
@@ -1889,4 +1898,4 @@
 
     // Give the init function the Enumerable prototype for later instantiation
     Enumerable.fn.init.prototype = Enumerable.fn;
-})();
+}());
