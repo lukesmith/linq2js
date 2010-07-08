@@ -476,7 +476,7 @@
         ///	</param>
         ///	<returns type="Enumerable" />
         if (index > sequence.elements.length && index < 0) {
-            throw "Index argument is out of range of Enumerable";
+            throw "Index argument is out of range of Enumerable.";
         }
 
         var first = sequence.elements.slice(0, index);
