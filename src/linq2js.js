@@ -1009,7 +1009,7 @@
         ///	</param>
         ///	<returns type="Enumerable" />
         if (count > sequence.elements.length) {
-            throw "Cannot take more elements than exist";
+            throw "Cannot take more elements than exist.";
         }
 
         var ret = new Enumerable();
