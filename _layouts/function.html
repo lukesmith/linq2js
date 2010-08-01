@@ -1,9 +1,28 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title></title>
+    <title>{{ page.title }}</title>
+    <link href="/stylesheets/common.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/syntax.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+    <div id="page">
+        <div id="header">
+            <h1>linq2js</h1>
+        </div>
 
+        <div id="content">
+            <h2>{{ page.functionName }}</h2>
+
+            {{ content }}
+        </div>
+
+        <div class="push"></div>
+    </div>
+
+    <div id="footer">
+        I am the footer
+    </div>
 </body>
 </html>

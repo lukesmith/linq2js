@@ -1,0 +1,32 @@
+---
+layout: function
+permalink: /functions/all
+title: All function
+functionName: All
+---
+
+# all(predicate) - Determines whether all elements of a sequence satisfy a condition.
+
+h3. Parameters
+
+h3. Returns
+
+Boolean
+
+h3. Examples
+
+h4. check whether all items are greater than 3
+
+{% highlight javascript linenos %}
+$e([1, 2, 3, 4, 5]).all(function(item) {
+    return item > 3;
+});
+{% endhighlight %}
+
+h4. check whether all items are not equal to 10
+
+{% highlight javascript linenos %}
+$e([1, 2, 3, 4, 5]).all(function(item) {
+    return item !== 10;
+});
+{% endhighlight %}
